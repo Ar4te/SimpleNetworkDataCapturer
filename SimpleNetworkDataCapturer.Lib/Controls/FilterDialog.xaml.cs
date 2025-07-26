@@ -20,6 +20,9 @@ public partial class FilterDialog : Window
         LoadRules();
         RulesListBox.ItemsSource = _rules;
         
+        // 显示配置文件路径
+        ConfigPathTextBlock.Text = _filterService.GetConfigFilePath();
+        
         // 设置默认值
         FilterTypeComboBox.SelectedIndex = 0;
         FilterOperatorComboBox.SelectedIndex = 0;

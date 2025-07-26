@@ -9,6 +9,7 @@ namespace SimpleNetworkDataCapturer.Services;
 public class PacketFilterService
 {
     private readonly List<FilterRule> _filterRules = new();
+    private readonly FilterRulePersistenceService _persistenceService;
     
     /// <summary>
     /// 过滤规则列表
@@ -16,9 +17,22 @@ public class PacketFilterService
     public IReadOnlyList<FilterRule> FilterRules => _filterRules.AsReadOnly();
     
     /// <summary>
+    /// 过滤规则变化事件
+    /// </summary>
+    public event EventHandler? FilterRulesChanged;
+    
+    /// <summary>
     /// 是否启用过滤
     /// </summary>
     public bool IsFilterEnabled { get; set; } = false;
+    
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    public PacketFilterService()
+    {
+        _persistenceService = new FilterRulePersistenceService();
+    }
     
     /// <summary>
     /// 添加过滤规则
@@ -26,6 +40,8 @@ public class PacketFilterService
     public void AddFilterRule(FilterRule rule)
     {
         _filterRules.Add(rule);
+        SaveFilterRulesAsync();
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
     }
     
     /// <summary>
@@ -34,6 +50,8 @@ public class PacketFilterService
     public void RemoveFilterRule(FilterRule rule)
     {
         _filterRules.Remove(rule);
+        SaveFilterRulesAsync();
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
     }
     
     /// <summary>
@@ -44,6 +62,8 @@ public class PacketFilterService
         if (index >= 0 && index < _filterRules.Count)
         {
             _filterRules.RemoveAt(index);
+            SaveFilterRulesAsync();
+            FilterRulesChanged?.Invoke(this, EventArgs.Empty);
         }
     }
     
@@ -53,6 +73,8 @@ public class PacketFilterService
     public void ClearFilterRules()
     {
         _filterRules.Clear();
+        SaveFilterRulesAsync();
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
     }
     
     /// <summary>
@@ -123,6 +145,33 @@ public class PacketFilterService
         
         result = num1.CompareTo(num2);
         return true;
+    }
+    
+    /// <summary>
+    /// 加载过滤规则
+    /// </summary>
+    public async Task LoadFilterRulesAsync()
+    {
+        var rules = await _persistenceService.LoadFilterRulesAsync();
+        _filterRules.Clear();
+        _filterRules.AddRange(rules);
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
+    /// <summary>
+    /// 保存过滤规则
+    /// </summary>
+    private async void SaveFilterRulesAsync()
+    {
+        await _persistenceService.SaveFilterRulesAsync(_filterRules);
+    }
+    
+    /// <summary>
+    /// 获取配置文件路径
+    /// </summary>
+    public string GetConfigFilePath()
+    {
+        return _persistenceService.GetConfigFilePath();
     }
     
     /// <summary>

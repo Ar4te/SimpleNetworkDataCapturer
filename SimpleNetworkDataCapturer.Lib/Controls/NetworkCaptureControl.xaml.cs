@@ -39,6 +39,9 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
         _packets = new ObservableCollection<NetworkPacket>();
         PacketsDataGrid.ItemsSource = _packets;
         
+        // 加载保存的过滤规则
+        _ = LoadFilterRulesAsync();
+        
         UpdateButtonStates();
     }
 
@@ -281,5 +284,20 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
         var filterDialog = new FilterDialog(_filterService);
         filterDialog.Owner = Window.GetWindow(this);
         filterDialog.ShowDialog();
+    }
+    
+    /// <summary>
+    /// 加载过滤规则
+    /// </summary>
+    private async Task LoadFilterRulesAsync()
+    {
+        try
+        {
+            await _filterService.LoadFilterRulesAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"加载过滤规则失败: {ex.Message}");
+        }
     }
 } 
