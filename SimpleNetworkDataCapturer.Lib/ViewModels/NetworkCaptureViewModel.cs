@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using SimpleNetworkDataCapturer.Models;
-using SimpleNetworkDataCapturer.Services;
+using SimpleNetworkDataCapturer.Lib.Models;
+using SimpleNetworkDataCapturer.Lib.Services;
 
-namespace SimpleNetworkDataCapturer.ViewModels;
+namespace SimpleNetworkDataCapturer.Lib.ViewModels;
 
 /// <summary>
 /// 网络抓包ViewModel

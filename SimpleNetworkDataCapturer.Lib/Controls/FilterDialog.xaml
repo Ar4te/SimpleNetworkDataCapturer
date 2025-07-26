@@ -4,7 +4,7 @@
         Title="过滤设置" Height="500" Width="800"
         WindowStartupLocation="CenterOwner"
         Background="#1E1E1E" ResizeMode="CanResize">
-    
+
     <Window.Resources>
         <Style x:Key="IndustrialButton" TargetType="Button">
             <Setter Property="Background" Value="#2D2D2D"/>
@@ -15,7 +15,7 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="FontWeight" Value="Medium"/>
         </Style>
-        
+
         <Style x:Key="IndustrialTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="#2D2D2D"/>
             <Setter Property="Foreground" Value="#E0E0E0"/>
@@ -23,7 +23,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="5"/>
         </Style>
-        
+
         <Style x:Key="IndustrialComboBox" TargetType="ComboBox">
             <Setter Property="Background" Value="#2D2D2D"/>
             <Setter Property="Foreground" Value="#E0E0E0"/>
@@ -105,11 +105,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="IndustrialCheckBox" TargetType="CheckBox">
             <Setter Property="Foreground" Value="#E0E0E0"/>
         </Style>
-        
+
         <Style x:Key="IndustrialComboBoxItem" TargetType="ComboBoxItem">
             <Setter Property="Background" Value="#1E1E1E"/>
             <Setter Property="Foreground" Value="#E0E0E0"/>
@@ -127,7 +127,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="IndustrialComboBoxSelectionBoxItem" TargetType="ComboBoxItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#E0E0E0"/>
@@ -135,7 +135,7 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
-        
+
         <Style x:Key="IndustrialListBoxItem" TargetType="ListBoxItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#E0E0E0"/>
@@ -153,7 +153,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="IndustrialScrollViewer" TargetType="ScrollViewer">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -170,14 +170,14 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            
+
                             <ScrollContentPresenter Grid.Column="0" Grid.Row="0"
                                                   CanContentScroll="{TemplateBinding CanContentScroll}"
                                                   Content="{TemplateBinding Content}"
                                                   ContentTemplate="{TemplateBinding ContentTemplate}"
                                                   Grid.ColumnSpan="2"
                                                   Margin="{TemplateBinding Padding}"/>
-                            
+
                             <ScrollBar x:Name="PART_VerticalScrollBar"
                                        Grid.Column="1" Grid.Row="0"
                                        Orientation="Vertical"
@@ -207,7 +207,7 @@
                                     </ControlTemplate>
                                 </ScrollBar.Template>
                             </ScrollBar>
-                            
+
                             <ScrollBar x:Name="PART_HorizontalScrollBar"
                                        Grid.Column="0" Grid.Row="1"
                                        Orientation="Horizontal"
@@ -243,19 +243,19 @@
             </Setter>
         </Style>
     </Window.Resources>
-    
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <!-- 标题 -->
         <TextBlock Grid.Row="0" Text="过滤规则设置" 
                    FontSize="18" FontWeight="Bold" 
                    Foreground="#E0E0E0" Margin="0,0,0,20"/>
-        
+
         <!-- 主要内容 -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -263,7 +263,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
+
             <!-- 左侧：规则列表 -->
             <Border Grid.Column="0" Background="#252525" Padding="10" Margin="0,0,10,0">
                 <Grid>
@@ -271,10 +271,10 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
+
                     <TextBlock Grid.Row="0" Text="当前规则:" 
                                FontWeight="Bold" Foreground="#E0E0E0" Margin="0,0,0,10"/>
-                    
+
                     <ListBox Grid.Row="1" x:Name="RulesListBox" 
                              Background="#1E1E1E" Foreground="#E0E0E0"
                              BorderBrush="#404040" BorderThickness="1"
@@ -297,10 +297,10 @@
                     </ListBox>
                 </Grid>
             </Border>
-            
+
             <!-- 中间：分隔线 -->
             <Border Grid.Column="1" Background="#404040" Width="1" Margin="10,0"/>
-            
+
             <!-- 右侧：规则编辑 -->
             <Border Grid.Column="2" Background="#252525" Padding="10" Margin="10,0,0,0">
                 <Grid>
@@ -311,10 +311,10 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    
+
                     <TextBlock Grid.Row="0" Text="规则编辑:" 
                                FontWeight="Bold" Foreground="#E0E0E0" Margin="0,0,0,10"/>
-                    
+
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
                                   Style="{StaticResource IndustrialScrollViewer}">
                         <StackPanel>
@@ -322,12 +322,12 @@
                             <TextBlock Text="规则名称:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <TextBox x:Name="RuleNameTextBox" Style="{StaticResource IndustrialTextBox}" 
                                      Margin="0,0,0,10"/>
-                            
+
                             <!-- 规则描述 -->
                             <TextBlock Text="规则描述:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <TextBox x:Name="RuleDescriptionTextBox" Style="{StaticResource IndustrialTextBox}" 
                                      Margin="0,0,0,10"/>
-                            
+
                             <!-- 过滤类型 -->
                             <TextBlock Text="过滤类型:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <ComboBox x:Name="FilterTypeComboBox" Style="{StaticResource IndustrialComboBox}" 
@@ -340,7 +340,7 @@
                                 <ComboBoxItem Content="协议类型"/>
                                 <ComboBoxItem Content="可读内容"/>
                             </ComboBox>
-                            
+
                             <!-- 操作符 -->
                             <TextBlock Text="操作符:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <ComboBox x:Name="FilterOperatorComboBox" Style="{StaticResource IndustrialComboBox}" 
@@ -353,12 +353,12 @@
                                 <ComboBoxItem Content="小于"/>
                                 <ComboBoxItem Content="正则表达式"/>
                             </ComboBox>
-                            
+
                             <!-- 过滤值 -->
                             <TextBlock Text="过滤值:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <TextBox x:Name="FilterValueTextBox" Style="{StaticResource IndustrialTextBox}" 
                                      Margin="0,0,0,10"/>
-                            
+
                             <!-- 协议选择器（当过滤类型为协议时显示） -->
                             <StackPanel x:Name="ProtocolSelectorPanel" Visibility="Collapsed">
                                 <TextBlock Text="协议选择:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
@@ -374,14 +374,14 @@
                                     <ComboBoxItem Content="ICMP"/>
                                 </ComboBox>
                             </StackPanel>
-                            
+
                             <!-- 启用状态 -->
                             <CheckBox x:Name="RuleEnabledCheckBox" Content="启用此规则" 
                                       Style="{StaticResource IndustrialCheckBox}" 
                                       Margin="0,10,0,0"/>
                         </StackPanel>
                     </ScrollViewer>
-                    
+
                     <!-- 编辑按钮 -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
                         <Button Content="添加规则" Style="{StaticResource IndustrialButton}" 
@@ -391,17 +391,17 @@
                         <Button Content="删除规则" Style="{StaticResource IndustrialButton}" 
                                 Click="DeleteRule_Click"/>
                     </StackPanel>
-                    
+
                     <!-- 配置文件路径 -->
                     <TextBlock Grid.Row="3" Text="配置文件路径:" 
                                FontWeight="Bold" Foreground="#E0E0E0" Margin="0,10,0,5"/>
                     <TextBlock Grid.Row="4" x:Name="ConfigPathTextBlock" 
                                Foreground="#CCCCCC" FontSize="10" TextWrapping="Wrap"
-                               Margin="0,0,0,10"/>
+                               Margin="0,0,0,10" />
                 </Grid>
             </Border>
         </Grid>
-        
+
         <!-- 底部按钮 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button Content="确定" Style="{StaticResource IndustrialButton}" 

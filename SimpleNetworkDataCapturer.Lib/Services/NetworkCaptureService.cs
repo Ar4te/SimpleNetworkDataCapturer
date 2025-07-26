@@ -1,9 +1,9 @@
-using SharpPcap;
 using PacketDotNet;
-using SimpleNetworkDataCapturer.Models;
+using SharpPcap;
+using SimpleNetworkDataCapturer.Lib.Models;
 using System.Collections.Concurrent;
 
-namespace SimpleNetworkDataCapturer.Services;
+namespace SimpleNetworkDataCapturer.Lib.Services;
 
 /// <summary>
 /// 网络抓包服务
@@ -79,6 +79,8 @@ public class NetworkCaptureService : IDisposable
 
             // 启动后台任务处理队列
             _ = Task.Run(ProcessPacketQueue);
+
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
@@ -269,7 +271,7 @@ public class NetworkCaptureService : IDisposable
     /// <summary>
     /// 识别TCP应用层协议
     /// </summary>
-    private string IdentifyApplicationProtocol(TcpPacket tcpPacket)
+    private static string IdentifyApplicationProtocol(TcpPacket tcpPacket)
     {
         if (tcpPacket.PayloadData.Length == 0) return "TCP";
 
@@ -358,7 +360,7 @@ public class NetworkCaptureService : IDisposable
     /// <summary>
     /// 识别UDP应用层协议
     /// </summary>
-    private string IdentifyUdpProtocol(UdpPacket udpPacket)
+    private static string IdentifyUdpProtocol(UdpPacket udpPacket)
     {
         // DNS
         if (udpPacket.SourcePort == 53 || udpPacket.DestinationPort == 53)

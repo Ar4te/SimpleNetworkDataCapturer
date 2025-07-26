@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using SimpleNetworkDataCapturer.Models;
-using SimpleNetworkDataCapturer.Services;
+using SimpleNetworkDataCapturer.Lib.Models;
+using SimpleNetworkDataCapturer.Lib.Services;
 
 namespace SimpleNetworkDataCapturer.Controls;
 
@@ -19,7 +19,7 @@ public partial class FilterDialog : Window
         
         LoadRules();
         RulesListBox.ItemsSource = _rules;
-        
+
         // 显示配置文件路径
         ConfigPathTextBlock.Text = _filterService.GetConfigFilePath();
         

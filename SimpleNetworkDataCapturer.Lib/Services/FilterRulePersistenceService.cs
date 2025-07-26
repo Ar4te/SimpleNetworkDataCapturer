@@ -1,8 +1,8 @@
-using System.Text.Json;
+using SimpleNetworkDataCapturer.Lib.Models;
 using System.IO;
-using SimpleNetworkDataCapturer.Models;
+using System.Text.Json;
 
-namespace SimpleNetworkDataCapturer.Services;
+namespace SimpleNetworkDataCapturer.Lib.Services;
 
 /// <summary>
 /// 过滤规则持久化服务
@@ -13,12 +13,8 @@ public class FilterRulePersistenceService
     
     public FilterRulePersistenceService()
     {
-        // 在用户文档目录下创建配置文件夹
-        var appDataPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            "SimpleNetworkDataCapturer"
-        );
-        
+        var appDataPath = AppDomain.CurrentDomain.BaseDirectory;
+
         if (!Directory.Exists(appDataPath))
         {
             Directory.CreateDirectory(appDataPath);

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SimpleNetworkDataCapturer.Models;
+namespace SimpleNetworkDataCapturer.Lib.Models;
 
 /// <summary>
 /// 网络数据包模型

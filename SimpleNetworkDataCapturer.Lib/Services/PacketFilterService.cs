@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using SimpleNetworkDataCapturer.Models;
+using SimpleNetworkDataCapturer.Lib.Models;
 
-namespace SimpleNetworkDataCapturer.Services;
+namespace SimpleNetworkDataCapturer.Lib.Services;
 
 /// <summary>
 /// 数据包过滤服务

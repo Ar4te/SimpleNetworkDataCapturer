@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using SimpleNetworkDataCapturer.Models;
-using SimpleNetworkDataCapturer.Services;
+using SimpleNetworkDataCapturer.Lib.Models;
+using SimpleNetworkDataCapturer.Lib.Services;
 
 namespace SimpleNetworkDataCapturer.Controls;
 

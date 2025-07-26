@@ -1,4 +1,4 @@
-namespace SimpleNetworkDataCapturer.Models;
+namespace SimpleNetworkDataCapturer.Lib.Models;
 
 /// <summary>
 /// 过滤规则类型
