@@ -30,10 +30,203 @@
             <Setter Property="BorderBrush" Value="#404040"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Grid.Column="2"
+                                          Focusable="false"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                            <Grid>
+                                                <Path x:Name="Arrow"
+                                                      Fill="#E0E0E0"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,8,0"
+                                                      Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite"
+                                              IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
+                            <TextBox x:Name="PART_EditableTextBox"
+                                     Style="{x:Null}"
+                                     Template="{DynamicResource ComboBoxTextBox}"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     Margin="{TemplateBinding Padding}"
+                                     Focusable="True"
+                                     Background="Transparent"
+                                     Foreground="#E0E0E0"
+                                     Visibility="Hidden"
+                                     IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid x:Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}"
+                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder"
+                                            Background="#1E1E1E"
+                                            BorderThickness="1"
+                                            BorderBrush="#404040"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         
         <Style x:Key="IndustrialCheckBox" TargetType="CheckBox">
             <Setter Property="Foreground" Value="#E0E0E0"/>
+        </Style>
+        
+        <Style x:Key="IndustrialComboBoxItem" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#404040"/>
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#505050"/>
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="IndustrialListBoxItem" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#404040"/>
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#505050"/>
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="IndustrialScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <ScrollContentPresenter Grid.Column="0" Grid.Row="0"
+                                                  CanContentScroll="{TemplateBinding CanContentScroll}"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Grid.ColumnSpan="2"
+                                                  Margin="{TemplateBinding Padding}"/>
+                            
+                            <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       Grid.Column="1" Grid.Row="0"
+                                       Orientation="Vertical"
+                                       Maximum="{TemplateBinding ScrollViewer.ScrollableHeight}"
+                                       Minimum="0"
+                                       Value="{TemplateBinding ScrollViewer.VerticalOffset}"
+                                       ViewportSize="{TemplateBinding ScrollViewer.ViewportHeight}"
+                                       Visibility="{TemplateBinding ScrollViewer.ComputedVerticalScrollBarVisibility}"
+                                       Background="Transparent"
+                                       BorderBrush="Transparent"
+                                       Foreground="#404040">
+                                <ScrollBar.Template>
+                                    <ControlTemplate TargetType="ScrollBar">
+                                        <Grid>
+                                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                                <Track.DecreaseRepeatButton>
+                                                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false"/>
+                                                </Track.DecreaseRepeatButton>
+                                                <Track.Thumb>
+                                                    <Thumb Background="#606060" BorderBrush="#808080" BorderThickness="1"/>
+                                                </Track.Thumb>
+                                                <Track.IncreaseRepeatButton>
+                                                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false"/>
+                                                </Track.IncreaseRepeatButton>
+                                            </Track>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ScrollBar.Template>
+                            </ScrollBar>
+                            
+                            <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                       Grid.Column="0" Grid.Row="1"
+                                       Orientation="Horizontal"
+                                       Maximum="{TemplateBinding ScrollViewer.ScrollableWidth}"
+                                       Minimum="0"
+                                       Value="{TemplateBinding ScrollViewer.HorizontalOffset}"
+                                       ViewportSize="{TemplateBinding ScrollViewer.ViewportWidth}"
+                                       Visibility="{TemplateBinding ScrollViewer.ComputedHorizontalScrollBarVisibility}"
+                                       Background="Transparent"
+                                       BorderBrush="Transparent"
+                                       Foreground="#404040">
+                                <ScrollBar.Template>
+                                    <ControlTemplate TargetType="ScrollBar">
+                                        <Grid>
+                                            <Track x:Name="PART_Track" IsDirectionReversed="false">
+                                                <Track.DecreaseRepeatButton>
+                                                    <RepeatButton Command="ScrollBar.PageLeftCommand" Opacity="0" Focusable="false"/>
+                                                </Track.DecreaseRepeatButton>
+                                                <Track.Thumb>
+                                                    <Thumb Background="#606060" BorderBrush="#808080" BorderThickness="1"/>
+                                                </Track.Thumb>
+                                                <Track.IncreaseRepeatButton>
+                                                    <RepeatButton Command="ScrollBar.PageRightCommand" Opacity="0" Focusable="false"/>
+                                                </Track.IncreaseRepeatButton>
+                                            </Track>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ScrollBar.Template>
+                            </ScrollBar>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
     
@@ -71,6 +264,7 @@
                     <ListBox Grid.Row="1" x:Name="RulesListBox" 
                              Background="#1E1E1E" Foreground="#E0E0E0"
                              BorderBrush="#404040" BorderThickness="1"
+                             ItemContainerStyle="{StaticResource IndustrialListBoxItem}"
                              SelectionChanged="RulesListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -105,7 +299,8 @@
                     <TextBlock Grid.Row="0" Text="规则编辑:" 
                                FontWeight="Bold" Foreground="#E0E0E0" Margin="0,0,0,10"/>
                     
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                                  Style="{StaticResource IndustrialScrollViewer}">
                         <StackPanel>
                             <!-- 规则名称 -->
                             <TextBlock Text="规则名称:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
@@ -120,6 +315,7 @@
                             <!-- 过滤类型 -->
                             <TextBlock Text="过滤类型:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <ComboBox x:Name="FilterTypeComboBox" Style="{StaticResource IndustrialComboBox}" 
+                                      ItemContainerStyle="{StaticResource IndustrialComboBoxItem}"
                                       Margin="0,0,0,10" SelectionChanged="FilterTypeComboBox_SelectionChanged">
                                 <ComboBoxItem Content="源地址"/>
                                 <ComboBoxItem Content="源端口"/>
@@ -132,6 +328,7 @@
                             <!-- 操作符 -->
                             <TextBlock Text="操作符:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                             <ComboBox x:Name="FilterOperatorComboBox" Style="{StaticResource IndustrialComboBox}" 
+                                      ItemContainerStyle="{StaticResource IndustrialComboBoxItem}"
                                       Margin="0,0,0,10">
                                 <ComboBoxItem Content="包含"/>
                                 <ComboBoxItem Content="等于"/>
@@ -150,6 +347,7 @@
                             <StackPanel x:Name="ProtocolSelectorPanel" Visibility="Collapsed">
                                 <TextBlock Text="协议选择:" Foreground="#E0E0E0" Margin="0,5,0,2"/>
                                 <ComboBox x:Name="ProtocolComboBox" Style="{StaticResource IndustrialComboBox}" 
+                                          ItemContainerStyle="{StaticResource IndustrialComboBoxItem}"
                                           Margin="0,0,0,10" SelectionChanged="ProtocolComboBox_SelectionChanged">
                                     <ComboBoxItem Content="HTTP"/>
                                     <ComboBoxItem Content="HTTPS"/>
