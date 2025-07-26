@@ -1,0 +1,179 @@
+<Window x:Class="SimpleNetworkDataCapturer.Controls.AdvancedFilterDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="高级过滤设置" Height="700" Width="1000"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E1E" Foreground="#E0E0E0"
+        ResizeMode="CanResize">
+    
+    <Window.Resources>
+        <!-- 工业风格按钮 -->
+        <Style x:Key="IndustrialButton" TargetType="Button">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#404040"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#505050"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- 工业风格文本框 -->
+        <Style x:Key="IndustrialTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        
+        <!-- 工业风格复选框 -->
+        <Style x:Key="IndustrialCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        
+        <!-- 工业风格标签 -->
+        <Style x:Key="IndustrialLabel" TargetType="Label">
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="5,5,5,2"/>
+        </Style>
+        
+        <!-- 工业风格组合框 -->
+        <Style x:Key="IndustrialComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        
+        <!-- 工业风格列表框 -->
+        <Style x:Key="IndustrialListBox" TargetType="ListBox">
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- 标题 -->
+        <TextBlock Grid.Row="0" Text="高级过滤规则管理" 
+                   FontSize="18" FontWeight="Bold" 
+                   Foreground="#E0E0E0" Margin="0,0,0,10"/>
+        
+        <!-- 主要内容 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- 左侧：规则组列表 -->
+            <Border Grid.Column="0" Background="#2D2D2D" BorderBrush="#404040" BorderThickness="1" CornerRadius="5">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Text="过滤规则组" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <ListBox Grid.Row="1" x:Name="RuleGroupsListBox" 
+                             Style="{StaticResource IndustrialListBox}"
+                             SelectionChanged="RuleGroupsListBox_SelectionChanged"/>
+                    
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="添加规则组" Style="{StaticResource IndustrialButton}" Click="AddRuleGroup_Click"/>
+                        <Button Content="删除规则组" Style="{StaticResource IndustrialButton}" Click="DeleteRuleGroup_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- 右侧：规则组编辑 -->
+            <Border Grid.Column="2" Background="#2D2D2D" BorderBrush="#404040" BorderThickness="1" CornerRadius="5">
+                <ScrollViewer>
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Text="规则组设置" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+                        
+                        <!-- 组名称 -->
+                        <Label Grid.Row="1" Content="组名称:" Style="{StaticResource IndustrialLabel}"/>
+                        <TextBox Grid.Row="2" x:Name="GroupNameTextBox" Style="{StaticResource IndustrialTextBox}"/>
+                        
+                        <!-- 组描述 -->
+                        <Label Grid.Row="3" Content="组描述:" Style="{StaticResource IndustrialLabel}"/>
+                        <TextBox Grid.Row="4" x:Name="GroupDescriptionTextBox" Style="{StaticResource IndustrialTextBox}"/>
+                        
+                        <!-- 关系类型 -->
+                        <Label Grid.Row="5" Content="规则关系:" Style="{StaticResource IndustrialLabel}"/>
+                        <ComboBox Grid.Row="6" x:Name="RelationComboBox" Style="{StaticResource IndustrialComboBox}"
+                                  SelectionChanged="RelationComboBox_SelectionChanged"/>
+                        
+                        <!-- 满足数量（仅当关系为Count时显示） -->
+                        <Label Grid.Row="7" Content="满足数量:" Style="{StaticResource IndustrialLabel}" x:Name="RequiredCountLabel" Visibility="Collapsed"/>
+                        <TextBox Grid.Row="8" x:Name="RequiredCountTextBox" Style="{StaticResource IndustrialTextBox}" 
+                                 Visibility="Collapsed"/>
+                        
+                        <!-- 启用状态 -->
+                        <CheckBox Grid.Row="9" x:Name="GroupEnabledCheckBox" Content="启用此规则组" 
+                                  Style="{StaticResource IndustrialCheckBox}" Margin="0,10,0,0"/>
+                        
+                        <!-- 规则列表 -->
+                        <Label Grid.Row="10" Content="组内规则:" Style="{StaticResource IndustrialLabel}"/>
+                        <ListBox Grid.Row="11" x:Name="GroupRulesListBox" Style="{StaticResource IndustrialListBox}" 
+                                 Height="150" SelectionChanged="GroupRulesListBox_SelectionChanged"/>
+                        
+                        <!-- 规则操作按钮 -->
+                        <StackPanel Grid.Row="12" Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button Content="添加规则" Style="{StaticResource IndustrialButton}" Click="AddRuleToGroup_Click"/>
+                            <Button Content="删除规则" Style="{StaticResource IndustrialButton}" Click="DeleteRuleFromGroup_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+        
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="确定" Style="{StaticResource IndustrialButton}" Click="OK_Click" Width="80"/>
+            <Button Content="取消" Style="{StaticResource IndustrialButton}" Click="Cancel_Click" Width="80"/>
+        </StackPanel>
+    </Grid>
+</Window> 

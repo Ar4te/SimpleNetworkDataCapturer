@@ -9,12 +9,18 @@ namespace SimpleNetworkDataCapturer.Lib.Services;
 public class PacketFilterService
 {
     private readonly List<FilterRule> _filterRules = new();
+    private readonly List<FilterRuleGroup> _filterRuleGroups = new();
     private readonly FilterRulePersistenceService _persistenceService;
     
     /// <summary>
     /// 过滤规则列表
     /// </summary>
     public IReadOnlyList<FilterRule> FilterRules => _filterRules.AsReadOnly();
+    
+    /// <summary>
+    /// 过滤规则组列表
+    /// </summary>
+    public IReadOnlyList<FilterRuleGroup> FilterRuleGroups => _filterRuleGroups.AsReadOnly();
     
     /// <summary>
     /// 过滤规则变化事件
@@ -78,24 +84,78 @@ public class PacketFilterService
     }
     
     /// <summary>
+    /// 添加过滤规则组
+    /// </summary>
+    public void AddFilterRuleGroup(FilterRuleGroup group)
+    {
+        _filterRuleGroups.Add(group);
+        SaveFilterRulesAsync();
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
+    /// <summary>
+    /// 移除过滤规则组
+    /// </summary>
+    public void RemoveFilterRuleGroup(FilterRuleGroup group)
+    {
+        _filterRuleGroups.Remove(group);
+        SaveFilterRulesAsync();
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
+    /// <summary>
+    /// 清空所有过滤规则组
+    /// </summary>
+    public void ClearFilterRuleGroups()
+    {
+        _filterRuleGroups.Clear();
+        SaveFilterRulesAsync();
+        FilterRulesChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
+    /// <summary>
     /// 检查数据包是否通过过滤
     /// </summary>
     public bool IsPacketPassed(NetworkPacket packet)
     {
-        if (!IsFilterEnabled || _filterRules.Count == 0)
+        if (!IsFilterEnabled)
         {
             return true; // 不过滤
         }
         
-        foreach (var rule in _filterRules.Where(r => r.IsEnabled))
+        // 检查单个规则
+        if (_filterRules.Count > 0)
         {
-            if (!IsRuleMatched(packet, rule))
+            var enabledRules = _filterRules.Where(r => r.IsEnabled).ToList();
+            if (enabledRules.Count > 0)
             {
-                return false; // 不匹配任何规则，过滤掉
+                foreach (var rule in enabledRules)
+                {
+                    if (!IsRuleMatched(packet, rule))
+                    {
+                        return false; // 不匹配任何规则，过滤掉
+                    }
+                }
             }
         }
         
-        return true; // 通过所有规则
+        // 检查规则组
+        if (_filterRuleGroups.Count > 0)
+        {
+            var enabledGroups = _filterRuleGroups.Where(g => g.IsEnabled).ToList();
+            if (enabledGroups.Count > 0)
+            {
+                foreach (var group in enabledGroups)
+                {
+                    if (!group.IsPacketPassed(packet))
+                    {
+                        return false; // 不匹配规则组，过滤掉
+                    }
+                }
+            }
+        }
+        
+        return true; // 通过所有规则和规则组
     }
     
     /// <summary>
@@ -153,8 +213,14 @@ public class PacketFilterService
     public async Task LoadFilterRulesAsync()
     {
         var rules = await _persistenceService.LoadFilterRulesAsync();
+        var ruleGroups = await _persistenceService.LoadFilterRuleGroupsAsync();
+        
         _filterRules.Clear();
         _filterRules.AddRange(rules);
+        
+        _filterRuleGroups.Clear();
+        _filterRuleGroups.AddRange(ruleGroups);
+        
         FilterRulesChanged?.Invoke(this, EventArgs.Empty);
     }
     
@@ -163,7 +229,7 @@ public class PacketFilterService
     /// </summary>
     private async void SaveFilterRulesAsync()
     {
-        await _persistenceService.SaveFilterRulesAsync(_filterRules);
+        await _persistenceService.SaveFilterRulesAsync(_filterRules, _filterRuleGroups);
     }
     
     /// <summary>

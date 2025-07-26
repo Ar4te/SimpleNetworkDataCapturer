@@ -138,9 +138,14 @@
                               Unchecked="FilterCheckBox_Unchecked"/>
                     
                     <Button x:Name="FilterButton" 
-                            Content="过滤设置" 
+                            Content="基础过滤" 
                             Style="{StaticResource IndustrialButton}"
                             Click="FilterButton_Click"/>
+                    
+                    <Button x:Name="AdvancedFilterButton" 
+                            Content="高级过滤" 
+                            Style="{StaticResource IndustrialButton}"
+                            Click="AdvancedFilterButton_Click"/>
                 </StackPanel>
             </Grid>
         </Border>

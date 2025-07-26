@@ -26,17 +26,23 @@ public class FilterRulePersistenceService
     /// <summary>
     /// 保存过滤规则到文件
     /// </summary>
-    public async Task SaveFilterRulesAsync(IEnumerable<FilterRule> rules)
+    public async Task SaveFilterRulesAsync(IEnumerable<FilterRule> rules, IEnumerable<FilterRuleGroup> ruleGroups = null)
     {
         try
         {
+            var data = new
+            {
+                Rules = rules,
+                RuleGroups = ruleGroups ?? new List<FilterRuleGroup>()
+            };
+            
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             
-            var json = JsonSerializer.Serialize(rules, options);
+            var json = JsonSerializer.Serialize(data, options);
             await File.WriteAllTextAsync(_filterRulesFilePath, json);
         }
         catch (Exception ex)
@@ -63,8 +69,24 @@ public class FilterRulePersistenceService
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             
-            var rules = JsonSerializer.Deserialize<List<FilterRule>>(json, options);
-            return rules ?? CreateDefaultRules();
+            // 尝试加载新格式（包含规则组）
+            try
+            {
+                var data = JsonSerializer.Deserialize<dynamic>(json, options);
+                if (data != null && data.GetProperty("rules").ValueKind == JsonValueKind.Array)
+                {
+                    var newFormatRules = JsonSerializer.Deserialize<List<FilterRule>>(data.GetProperty("rules").GetRawText(), options);
+                    return newFormatRules ?? CreateDefaultRules();
+                }
+            }
+            catch
+            {
+                // 如果新格式解析失败，尝试旧格式
+            }
+            
+            // 尝试旧格式（只有规则列表）
+            var oldFormatRules = JsonSerializer.Deserialize<List<FilterRule>>(json, options);
+            return oldFormatRules ?? CreateDefaultRules();
         }
         catch (Exception ex)
         {
@@ -143,6 +165,48 @@ public class FilterRulePersistenceService
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"删除过滤规则文件失败: {ex.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// 从文件加载过滤规则组
+    /// </summary>
+    public async Task<List<FilterRuleGroup>> LoadFilterRuleGroupsAsync()
+    {
+        try
+        {
+            if (!File.Exists(_filterRulesFilePath))
+            {
+                return new List<FilterRuleGroup>();
+            }
+            
+            var json = await File.ReadAllTextAsync(_filterRulesFilePath);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            
+            // 尝试加载新格式（包含规则组）
+            try
+            {
+                var data = JsonSerializer.Deserialize<dynamic>(json, options);
+                if (data != null && data.GetProperty("ruleGroups").ValueKind == JsonValueKind.Array)
+                {
+                    var ruleGroups = JsonSerializer.Deserialize<List<FilterRuleGroup>>(data.GetProperty("ruleGroups").GetRawText(), options);
+                    return ruleGroups ?? new List<FilterRuleGroup>();
+                }
+            }
+            catch
+            {
+                // 如果新格式解析失败，返回空列表
+            }
+            
+            return new List<FilterRuleGroup>();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"加载过滤规则组失败: {ex.Message}");
+            return new List<FilterRuleGroup>();
         }
     }
     

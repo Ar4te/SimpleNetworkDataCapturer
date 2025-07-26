@@ -277,13 +277,31 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
     }
 
     /// <summary>
-    /// 显示过滤设置对话框
+    /// 显示基础过滤设置对话框
     /// </summary>
     private void ShowFilterDialog()
     {
         var filterDialog = new FilterDialog(_filterService);
         filterDialog.Owner = Window.GetWindow(this);
         filterDialog.ShowDialog();
+    }
+    
+    /// <summary>
+    /// 显示高级过滤设置对话框
+    /// </summary>
+    private void ShowAdvancedFilterDialog()
+    {
+        var advancedFilterDialog = new AdvancedFilterDialog(_filterService);
+        advancedFilterDialog.Owner = Window.GetWindow(this);
+        advancedFilterDialog.ShowDialog();
+    }
+    
+    /// <summary>
+    /// 高级过滤按钮点击事件
+    /// </summary>
+    private void AdvancedFilterButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowAdvancedFilterDialog();
     }
     
     /// <summary>

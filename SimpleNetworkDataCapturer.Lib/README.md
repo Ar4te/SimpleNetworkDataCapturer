@@ -11,9 +11,10 @@
 - ✅ 智能识别协议类型（TCP、UDP、HTTP、HTTPS、DNS、DHCP、FTP、SMTP、POP3、IMAP 等）
 - ✅ 提供可读字符串信息和十六进制信息
 - ✅ 智能过滤功能，支持按地址、端口、协议、内容过滤
+- ✅ 高级过滤规则组，支持复杂的规则组合关系（AND/OR/N-of-M）
 - ✅ 详细协议统计，显示各种协议的包数量
 - ✅ 简约大气的工业风 UI 设计
-- ✅ 封装为 WPF 控件，便于分发使用
+- ✅ 封装为 WPF 控件库，便于分发使用
 - ✅ 强大的错误处理机制，避免单个数据包解析失败影响整体功能
 
 ## 支持的协议
@@ -113,9 +114,11 @@ dotnet run --project SimpleNetworkDataCapturer.Demo
 ### 过滤功能
 
 - `FilterService` - 获取过滤服务实例
-- 支持按源地址、目标地址、端口、协议类型、内容进行过滤
+- **基础过滤**：支持按源地址、目标地址、端口、协议类型、内容进行过滤
+- **高级过滤**：支持复杂的规则组合关系（AND/OR/N-of-M）
 - 支持多种操作符：包含、等于、不等于、大于、小于、正则表达式
 - 提供可视化的过滤规则管理界面
+- 支持规则组的创建、编辑、删除和管理
 
 ### 事件
 
@@ -167,8 +170,8 @@ public partial class MainWindow : Window
         MessageBox.Show($"抓包错误: {error}");
     }
 
-    // 使用过滤功能
-    private void SetupFiltering()
+    // 使用基础过滤功能
+    private void SetupBasicFiltering()
     {
         var filterService = NetworkCapture.FilterService;
 
@@ -195,6 +198,77 @@ public partial class MainWindow : Window
             IsEnabled = true
         };
         filterService.AddFilterRule(localRule);
+
+        // 启用过滤
+        filterService.IsFilterEnabled = true;
+    }
+
+    // 使用高级过滤功能
+    private void SetupAdvancedFiltering()
+    {
+        var filterService = NetworkCapture.FilterService;
+
+        // 创建规则组：Web流量（HTTP或HTTPS）
+        var webGroup = new FilterRuleGroup
+        {
+            Name = "Web流量",
+            Description = "显示HTTP或HTTPS协议的数据包",
+            Relation = FilterGroupRelation.Any,
+            IsEnabled = true
+        };
+
+        // 添加HTTP规则到组
+        webGroup.Rules.Add(new FilterRule
+        {
+            Name = "HTTP协议",
+            Type = FilterType.Protocol,
+            Operator = FilterOperator.Equals,
+            Value = "HTTP",
+            IsEnabled = true
+        });
+
+        // 添加HTTPS规则到组
+        webGroup.Rules.Add(new FilterRule
+        {
+            Name = "HTTPS协议",
+            Type = FilterType.Protocol,
+            Operator = FilterOperator.Equals,
+            Value = "HTTPS",
+            IsEnabled = true
+        });
+
+        filterService.AddFilterRuleGroup(webGroup);
+
+        // 创建规则组：重要端口流量（需要满足端口和协议两个条件）
+        var importantPortsGroup = new FilterRuleGroup
+        {
+            Name = "重要端口流量",
+            Description = "显示80、443、8080端口的HTTP/HTTPS流量",
+            Relation = FilterGroupRelation.All,
+            IsEnabled = true
+        };
+
+        // 添加端口规则
+        importantPortsGroup.Rules.Add(new FilterRule
+        {
+            Name = "Web端口",
+            Type = FilterType.DestinationPort,
+            Operator = FilterOperator.Contains,
+            Value = "80,443,8080",
+            IsEnabled = true
+        });
+
+        // 添加协议规则
+        importantPortsGroup.Rules.Add(new FilterRule
+        {
+            Name = "Web协议",
+            Type = FilterType.Protocol,
+            Operator = FilterOperator.Contains,
+            Value = "HTTP,HTTPS",
+            IsEnabled = true
+        });
+
+        filterService.AddFilterRuleGroup(importantPortsGroup);
 
         // 启用过滤
         filterService.IsFilterEnabled = true;
@@ -249,6 +323,23 @@ public partial class MainWindow : Window
 5. **协议识别**: HTTPS 流量由于加密，只能识别为 HTTPS，无法查看具体内容
 
 ## 更新日志
+
+### v3.0.0 (2024-12-19)
+
+- ✅ **项目架构优化**
+  - 将 `SimpleNetworkDataCapturer.Lib` 从 WPF 项目改为库项目
+  - 删除不必要的 WPF 项目文件（MainWindow.xaml、App.xaml 等）
+  - 更清晰的架构分离，专注于提供可重用控件库
+- ✅ **高级过滤规则组功能**
+  - 支持复杂的规则组合关系：全部满足（AND）、任意满足（OR）、指定数量满足（N-of-M）
+  - 提供规则组管理界面，支持创建、编辑、删除规则组
+  - 每个规则组可以包含多个过滤规则，支持不同的组合逻辑
+  - 规则组与单个规则并存，提供更灵活的过滤策略
+- ✅ **过滤功能增强**
+  - 分离基础过滤和高级过滤功能
+  - 基础过滤：简单的单个规则管理
+  - 高级过滤：复杂的规则组管理
+  - 支持规则组的持久化存储和加载
 
 ### v2.0.0 (2024-12-19)
 
