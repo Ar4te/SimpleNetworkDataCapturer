@@ -142,10 +142,10 @@
                             Style="{StaticResource IndustrialButton}"
                             Click="FilterButton_Click"/>
                     
-                    <Button x:Name="AdvancedFilterButton" 
+                    <!-- <Button x:Name="AdvancedFilterButton" 
                             Content="高级过滤" 
                             Style="{StaticResource IndustrialButton}"
-                            Click="AdvancedFilterButton_Click"/>
+                            Click="AdvancedFilterButton_Click"/> -->
                 </StackPanel>
             </Grid>
         </Border>

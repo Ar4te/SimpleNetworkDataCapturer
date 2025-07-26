@@ -324,7 +324,7 @@ public partial class MainWindow : Window
 
 ## 更新日志
 
-### v3.0.0 (2024-12-19)
+### v3.0.0 (2025-07-27)
 
 - ✅ **项目架构优化**
   - 将 `SimpleNetworkDataCapturer.Lib` 从 WPF 项目改为库项目
@@ -341,7 +341,7 @@ public partial class MainWindow : Window
   - 高级过滤：复杂的规则组管理
   - 支持规则组的持久化存储和加载
 
-### v2.0.0 (2024-12-19)
+### v2.0.0 (2025-07-26)
 
 - ✅ 新增智能过滤功能
   - 支持按源地址、目标地址、端口、协议类型、内容过滤
@@ -356,26 +356,13 @@ public partial class MainWindow : Window
   - 提供 FilterService 属性供外部访问
   - 优化用户界面布局
 
-### v1.0.0 (2024-12-18)
+### v1.0.0 (2025-07-26)
 
 - ✅ 基础抓包功能
 - ✅ 多协议支持（TCP、UDP、HTTP、HTTPS、DNS、DHCP 等）
 - ✅ 工业风 UI 设计
 - ✅ 可重用 WPF 控件
-
-### v1.1.0
-
-- ✅ 修复数据包解析时的数组越界错误
-- ✅ 新增 HTTP/HTTPS 协议识别
-- ✅ 新增 DNS、DHCP、FTP、SMTP、POP3、IMAP 协议识别
-- ✅ 改进错误处理机制
 - ✅ 优化协议统计逻辑
-
-### v1.0.0
-
-- ✅ 基础抓包功能
-- ✅ TCP/UDP 协议支持
-- ✅ WPF 控件封装
 
 ## 许可证
 
