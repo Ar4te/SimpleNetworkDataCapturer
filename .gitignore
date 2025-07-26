@@ -1,0 +1,9 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs
+/SimpleNetworkDataCapturer.Demo/bin/Debug/net9.0-windows
+/SimpleNetworkDataCapturer.Demo/obj
+/SimpleNetworkDataCapturer.Lib/bin/Debug/net9.0-windows
+/SimpleNetworkDataCapturer.Lib/obj
