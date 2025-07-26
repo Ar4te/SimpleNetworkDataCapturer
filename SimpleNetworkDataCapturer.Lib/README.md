@@ -10,6 +10,8 @@
 - ✅ 显示源地址、源端口、目标地址、目标端口
 - ✅ 智能识别协议类型（TCP、UDP、HTTP、HTTPS、DNS、DHCP、FTP、SMTP、POP3、IMAP 等）
 - ✅ 提供可读字符串信息和十六进制信息
+- ✅ 智能过滤功能，支持按地址、端口、协议、内容过滤
+- ✅ 详细协议统计，显示各种协议的包数量
 - ✅ 简约大气的工业风 UI 设计
 - ✅ 封装为 WPF 控件，便于分发使用
 - ✅ 强大的错误处理机制，避免单个数据包解析失败影响整体功能
@@ -108,6 +110,13 @@ dotnet run --project SimpleNetworkDataCapturer.Demo
 - `GetPackets()` - 获取当前数据包列表
 - `GetStatistics()` - 获取统计信息
 
+### 过滤功能
+
+- `FilterService` - 获取过滤服务实例
+- 支持按源地址、目标地址、端口、协议类型、内容进行过滤
+- 支持多种操作符：包含、等于、不等于、大于、小于、正则表达式
+- 提供可视化的过滤规则管理界面
+
 ### 事件
 
 - `PacketCaptured` - 数据包到达事件
@@ -156,6 +165,39 @@ public partial class MainWindow : Window
     {
         // 处理错误
         MessageBox.Show($"抓包错误: {error}");
+    }
+
+    // 使用过滤功能
+    private void SetupFiltering()
+    {
+        var filterService = NetworkCapture.FilterService;
+
+        // 添加过滤规则：只显示HTTP协议
+        var httpRule = new FilterRule
+        {
+            Name = "HTTP流量",
+            Description = "只显示HTTP协议的数据包",
+            Type = FilterType.Protocol,
+            Operator = FilterOperator.Equals,
+            Value = "HTTP",
+            IsEnabled = true
+        };
+        filterService.AddFilterRule(httpRule);
+
+        // 添加过滤规则：过滤本地流量
+        var localRule = new FilterRule
+        {
+            Name = "本地流量",
+            Description = "只显示本地地址的流量",
+            Type = FilterType.SourceAddress,
+            Operator = FilterOperator.Contains,
+            Value = "127.0.0.1",
+            IsEnabled = true
+        };
+        filterService.AddFilterRule(localRule);
+
+        // 启用过滤
+        filterService.IsFilterEnabled = true;
     }
 }
 ```
@@ -207,6 +249,28 @@ public partial class MainWindow : Window
 5. **协议识别**: HTTPS 流量由于加密，只能识别为 HTTPS，无法查看具体内容
 
 ## 更新日志
+
+### v2.0.0 (2024-12-19)
+
+- ✅ 新增智能过滤功能
+  - 支持按源地址、目标地址、端口、协议类型、内容过滤
+  - 支持多种操作符：包含、等于、不等于、大于、小于、正则表达式
+  - 提供可视化的过滤规则管理界面
+- ✅ 优化协议统计显示
+  - 详细显示 HTTP、HTTPS、DNS、DHCP、ICMP 等协议数量
+  - 只有无法识别的协议才计入"其他"
+  - 支持水平滚动显示更多统计信息
+- ✅ 改进控件架构
+  - 过滤功能集成到核心控件中
+  - 提供 FilterService 属性供外部访问
+  - 优化用户界面布局
+
+### v1.0.0 (2024-12-18)
+
+- ✅ 基础抓包功能
+- ✅ 多协议支持（TCP、UDP、HTTP、HTTPS、DNS、DHCP 等）
+- ✅ 工业风 UI 设计
+- ✅ 可重用 WPF 控件
 
 ### v1.1.0
 

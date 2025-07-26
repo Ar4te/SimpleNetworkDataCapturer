@@ -14,11 +14,18 @@ namespace SimpleNetworkDataCapturer.ViewModels;
 public class NetworkCaptureViewModel : INotifyPropertyChanged
 {
     private readonly NetworkCaptureService _captureService;
+    private readonly PacketFilterService _filterService;
     private bool _isCapturing;
     private string _statusMessage = "就绪";
     private int _totalPackets;
     private int _tcpPackets;
     private int _udpPackets;
+    private int _httpPackets;
+    private int _httpsPackets;
+    private int _dnsPackets;
+    private int _dhcpPackets;
+    private int _icmpPackets;
+    private int _ethernetPackets;
     private int _otherPackets;
 
     public NetworkCaptureViewModel()
@@ -27,12 +34,14 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
         _captureService.PacketCaptured += OnPacketCaptured;
         _captureService.ErrorOccurred += OnErrorOccurred;
 
+        _filterService = new PacketFilterService();
         Packets = new ObservableCollection<NetworkPacket>();
         AvailableDevices = _captureService.GetAvailableDevices();
 
         StartCaptureCommand = new RelayCommand(StartCapture, CanStartCapture);
         StopCaptureCommand = new RelayCommand(StopCapture, CanStopCapture);
         ClearCommand = new RelayCommand(ClearPackets, CanClearPackets);
+        ToggleFilterCommand = new RelayCommand(ToggleFilter, CanToggleFilter);
     }
 
     /// <summary>
@@ -113,6 +122,84 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
     }
 
     /// <summary>
+    /// HTTP数据包数
+    /// </summary>
+    public int HttpPackets
+    {
+        get => _httpPackets;
+        set
+        {
+            _httpPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// HTTPS数据包数
+    /// </summary>
+    public int HttpsPackets
+    {
+        get => _httpsPackets;
+        set
+        {
+            _httpsPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// DNS数据包数
+    /// </summary>
+    public int DnsPackets
+    {
+        get => _dnsPackets;
+        set
+        {
+            _dnsPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// DHCP数据包数
+    /// </summary>
+    public int DhcpPackets
+    {
+        get => _dhcpPackets;
+        set
+        {
+            _dhcpPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// ICMP数据包数
+    /// </summary>
+    public int IcmpPackets
+    {
+        get => _icmpPackets;
+        set
+        {
+            _icmpPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Ethernet数据包数
+    /// </summary>
+    public int EthernetPackets
+    {
+        get => _ethernetPackets;
+        set
+        {
+            _ethernetPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
     /// 其他协议数据包数
     /// </summary>
     public int OtherPackets
@@ -121,6 +208,19 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
         set
         {
             _otherPackets = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// 是否启用过滤
+    /// </summary>
+    public bool IsFilterEnabled
+    {
+        get => _filterService.IsFilterEnabled;
+        set
+        {
+            _filterService.IsFilterEnabled = value;
             OnPropertyChanged();
         }
     }
@@ -139,6 +239,11 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
     /// 清空数据包命令
     /// </summary>
     public ICommand ClearCommand { get; }
+
+    /// <summary>
+    /// 切换过滤命令
+    /// </summary>
+    public ICommand ToggleFilterCommand { get; }
 
     /// <summary>
     /// 开始抓包
@@ -193,8 +298,23 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
         TotalPackets = 0;
         TcpPackets = 0;
         UdpPackets = 0;
+        HttpPackets = 0;
+        HttpsPackets = 0;
+        DnsPackets = 0;
+        DhcpPackets = 0;
+        IcmpPackets = 0;
+        EthernetPackets = 0;
         OtherPackets = 0;
         StatusMessage = "数据已清空";
+    }
+
+    /// <summary>
+    /// 切换过滤
+    /// </summary>
+    private void ToggleFilter()
+    {
+        IsFilterEnabled = !IsFilterEnabled;
+        StatusMessage = IsFilterEnabled ? "过滤已启用" : "过滤已禁用";
     }
 
     /// <summary>
@@ -213,12 +333,23 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
     private bool CanClearPackets() => Packets.Count > 0;
 
     /// <summary>
+    /// 是否可以切换过滤
+    /// </summary>
+    private bool CanToggleFilter() => true;
+
+    /// <summary>
     /// 数据包到达事件处理
     /// </summary>
     private void OnPacketCaptured(object? sender, NetworkPacket packet)
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
+            // 应用过滤
+            if (!_filterService.IsPacketPassed(packet))
+            {
+                return; // 过滤掉不匹配的数据包
+            }
+
             Packets.Insert(0, packet); // 新数据包插入到顶部
             
             // 限制显示的数据包数量
@@ -229,23 +360,35 @@ public class NetworkCaptureViewModel : INotifyPropertyChanged
 
             TotalPackets++;
             
-            // 更新协议统计
+            // 更新详细协议统计
             switch (packet.Protocol.ToUpper())
             {
-                case "TCP":
                 case "HTTP":
+                    HttpPackets++;
+                    TcpPackets++;
+                    break;
                 case "HTTPS":
-                case "FTP":
-                case "SMTP":
-                case "POP3":
-                case "IMAP":
+                    HttpsPackets++;
+                    TcpPackets++;
+                    break;
+                case "DNS":
+                    DnsPackets++;
+                    UdpPackets++;
+                    break;
+                case "DHCP":
+                    DhcpPackets++;
+                    UdpPackets++;
+                    break;
+                case "ICMP":
+                    IcmpPackets++;
+                    break;
+                case "ETHERNET":
+                    EthernetPackets++;
+                    break;
+                case "TCP":
                     TcpPackets++;
                     break;
                 case "UDP":
-                case "DNS":
-                case "DHCP":
-                case "SNMP":
-                case "NTP":
                     UdpPackets++;
                     break;
                 default:

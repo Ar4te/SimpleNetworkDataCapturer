@@ -12,11 +12,18 @@ namespace SimpleNetworkDataCapturer.Controls;
 public partial class NetworkCaptureControl : UserControl, IDisposable
 {
     private readonly NetworkCaptureService _captureService;
+    private readonly PacketFilterService _filterService;
     private readonly ObservableCollection<NetworkPacket> _packets;
     
     private int _totalPackets;
     private int _tcpPackets;
     private int _udpPackets;
+    private int _httpPackets;
+    private int _httpsPackets;
+    private int _dnsPackets;
+    private int _dhcpPackets;
+    private int _icmpPackets;
+    private int _ethernetPackets;
     private int _otherPackets;
     private bool _isCapturing;
 
@@ -28,6 +35,7 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
         _captureService.PacketCaptured += OnPacketCaptured;
         _captureService.ErrorOccurred += OnErrorOccurred;
         
+        _filterService = new PacketFilterService();
         _packets = new ObservableCollection<NetworkPacket>();
         PacketsDataGrid.ItemsSource = _packets;
         
@@ -100,6 +108,12 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
         _totalPackets = 0;
         _tcpPackets = 0;
         _udpPackets = 0;
+        _httpPackets = 0;
+        _httpsPackets = 0;
+        _dnsPackets = 0;
+        _dhcpPackets = 0;
+        _icmpPackets = 0;
+        _ethernetPackets = 0;
         _otherPackets = 0;
         UpdateStatistics();
         StatusText.Text = "数据已清空";
@@ -116,15 +130,20 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
     /// <summary>
     /// 获取统计信息
     /// </summary>
-    public (int Total, int Tcp, int Udp, int Other) GetStatistics()
+    public (int Total, int Tcp, int Udp, int Http, int Https, int Dns, int Dhcp, int Icmp, int Other) GetStatistics()
     {
-        return (_totalPackets, _tcpPackets, _udpPackets, _otherPackets);
+        return (_totalPackets, _tcpPackets, _udpPackets, _httpPackets, _httpsPackets, _dnsPackets, _dhcpPackets, _icmpPackets, _otherPackets);
     }
 
     /// <summary>
     /// 是否正在抓包
     /// </summary>
     public bool IsCapturing => _isCapturing;
+
+    /// <summary>
+    /// 获取过滤服务
+    /// </summary>
+    public PacketFilterService FilterService => _filterService;
 
     private void StartButton_Click(object sender, RoutedEventArgs e)
     {
@@ -141,10 +160,33 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
         ClearPackets();
     }
 
+    private void FilterCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        _filterService.IsFilterEnabled = true;
+        StatusText.Text = "过滤已启用";
+    }
+
+    private void FilterCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    {
+        _filterService.IsFilterEnabled = false;
+        StatusText.Text = "过滤已禁用";
+    }
+
+    private void FilterButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowFilterDialog();
+    }
+
     private void OnPacketCaptured(object? sender, NetworkPacket packet)
     {
         Dispatcher.Invoke(() =>
         {
+            // 应用过滤
+            if (!_filterService.IsPacketPassed(packet))
+            {
+                return; // 过滤掉不匹配的数据包
+            }
+
             _packets.Insert(0, packet); // 新数据包插入到顶部
             
             // 限制显示的数据包数量
@@ -155,9 +197,31 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
 
             _totalPackets++;
             
-            // 更新协议统计
+            // 更新详细协议统计
             switch (packet.Protocol.ToUpper())
             {
+                case "HTTP":
+                    _httpPackets++;
+                    _tcpPackets++;
+                    break;
+                case "HTTPS":
+                    _httpsPackets++;
+                    _tcpPackets++;
+                    break;
+                case "DNS":
+                    _dnsPackets++;
+                    _udpPackets++;
+                    break;
+                case "DHCP":
+                    _dhcpPackets++;
+                    _udpPackets++;
+                    break;
+                case "ICMP":
+                    _icmpPackets++;
+                    break;
+                case "ETHERNET":
+                    _ethernetPackets++;
+                    break;
                 case "TCP":
                     _tcpPackets++;
                     break;
@@ -194,7 +258,12 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
     {
         TotalText.Text = _totalPackets.ToString();
         TcpText.Text = _tcpPackets.ToString();
+        HttpText.Text = _httpPackets.ToString();
+        HttpsText.Text = _httpsPackets.ToString();
         UdpText.Text = _udpPackets.ToString();
+        DnsText.Text = _dnsPackets.ToString();
+        DhcpText.Text = _dhcpPackets.ToString();
+        IcmpText.Text = _icmpPackets.ToString();
         OtherText.Text = _otherPackets.ToString();
         UpdateButtonStates();
     }
@@ -202,5 +271,15 @@ public partial class NetworkCaptureControl : UserControl, IDisposable
     public void Dispose()
     {
         _captureService?.Dispose();
+    }
+
+    /// <summary>
+    /// 显示过滤设置对话框
+    /// </summary>
+    private void ShowFilterDialog()
+    {
+        var filterDialog = new FilterDialog(_filterService);
+        filterDialog.Owner = Window.GetWindow(this);
+        filterDialog.ShowDialog();
     }
 } 

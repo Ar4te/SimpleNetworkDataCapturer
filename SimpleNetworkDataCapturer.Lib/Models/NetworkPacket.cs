@@ -98,4 +98,18 @@ public class NetworkPacket
     /// 获取简化的显示信息
     /// </summary>
     public string DisplayInfo => $"{FormattedTime} | {SourceAddress}:{SourcePort} -> {DestinationAddress}:{DestinationPort} | {Protocol} | {Length} bytes";
+    
+    /// <summary>
+    /// 获取协议分类（用于统计）
+    /// </summary>
+    public string ProtocolCategory => Protocol switch
+    {
+        "HTTP" or "HTTPS" or "FTP" or "SMTP" or "POP3" or "IMAP" => "TCP应用层",
+        "DNS" or "DHCP" or "SNMP" or "NTP" => "UDP应用层",
+        "TCP" => "TCP",
+        "UDP" => "UDP",
+        "ICMP" => "ICMP",
+        "Ethernet" => "Ethernet",
+        _ => "其他"
+    };
 } 

@@ -103,42 +103,83 @@
 
         <!-- 控制面板 -->
         <Border Grid.Row="0" Background="#252525" Padding="10,8">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="StartButton" 
-                        Content="开始抓包" 
-                        Style="{StaticResource IndustrialButton}"
-                        Click="StartButton_Click"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 
-                <Button x:Name="StopButton" 
-                        Content="停止抓包" 
-                        Style="{StaticResource IndustrialButton}"
-                        Click="StopButton_Click"/>
+                <!-- 主要控制按钮 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="StartButton" 
+                            Content="开始抓包" 
+                            Style="{StaticResource IndustrialButton}"
+                            Click="StartButton_Click"/>
+                    
+                    <Button x:Name="StopButton" 
+                            Content="停止抓包" 
+                            Style="{StaticResource IndustrialButton}"
+                            Click="StopButton_Click"/>
+                    
+                    <Button x:Name="ClearButton" 
+                            Content="清空数据" 
+                            Style="{StaticResource IndustrialButton}"
+                            Click="ClearButton_Click"/>
+                </StackPanel>
                 
-                <Button x:Name="ClearButton" 
-                        Content="清空数据" 
-                        Style="{StaticResource IndustrialButton}"
-                        Click="ClearButton_Click"/>
-            </StackPanel>
+                <!-- 过滤控制 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <CheckBox x:Name="FilterCheckBox" 
+                              Content="启用过滤" 
+                              Foreground="#E0E0E0" 
+                              VerticalAlignment="Center"
+                              Margin="10,0"
+                              Checked="FilterCheckBox_Checked"
+                              Unchecked="FilterCheckBox_Unchecked"/>
+                    
+                    <Button x:Name="FilterButton" 
+                            Content="过滤设置" 
+                            Style="{StaticResource IndustrialButton}"
+                            Click="FilterButton_Click"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- 统计信息 -->
         <Border Grid.Row="1" Background="#252525" Padding="10,6" Margin="0,0,0,5">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="状态: " Foreground="#E0E0E0" FontWeight="Bold" FontSize="11"/>
-                <TextBlock x:Name="StatusText" Text="就绪" Foreground="#90EE90" Margin="5,0" FontSize="11"/>
-                
-                <TextBlock Text=" | 总计: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
-                <TextBlock x:Name="TotalText" Text="0" Foreground="#87CEEB" Margin="5,0" FontSize="11"/>
-                
-                <TextBlock Text=" | TCP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
-                <TextBlock x:Name="TcpText" Text="0" Foreground="#FFB6C1" Margin="5,0" FontSize="11"/>
-                
-                <TextBlock Text=" | UDP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
-                <TextBlock x:Name="UdpText" Text="0" Foreground="#DDA0DD" Margin="5,0" FontSize="11"/>
-                
-                <TextBlock Text=" | 其他: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
-                <TextBlock x:Name="OtherText" Text="0" Foreground="#F0E68C" Margin="5,0" FontSize="11"/>
-            </StackPanel>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="状态: " Foreground="#E0E0E0" FontWeight="Bold" FontSize="11"/>
+                    <TextBlock x:Name="StatusText" Text="就绪" Foreground="#90EE90" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | 总计: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="TotalText" Text="0" Foreground="#87CEEB" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | TCP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="TcpText" Text="0" Foreground="#FFB6C1" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | HTTP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="HttpText" Text="0" Foreground="#FFA500" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | HTTPS: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="HttpsText" Text="0" Foreground="#32CD32" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | UDP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="UdpText" Text="0" Foreground="#DDA0DD" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | DNS: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="DnsText" Text="0" Foreground="#00CED1" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | DHCP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="DhcpText" Text="0" Foreground="#FF69B4" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | ICMP: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="IcmpText" Text="0" Foreground="#FF4500" Margin="5,0" FontSize="11"/>
+                    
+                    <TextBlock Text=" | 其他: " Foreground="#E0E0E0" FontWeight="Bold" Margin="15,0,0,0" FontSize="11"/>
+                    <TextBlock x:Name="OtherText" Text="0" Foreground="#F0E68C" Margin="5,0" FontSize="11"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <!-- 数据包表格 -->
