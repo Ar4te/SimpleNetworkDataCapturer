@@ -177,7 +177,7 @@ public class NetworkCaptureService : IDisposable
             
             var networkPacket = new NetworkPacket
             {
-                CaptureTime = rawPacket.Timeval.Date,
+                CaptureTime = rawPacket.Timeval.Date.ToLocalTime(),
                 Length = rawPacket.Data.Length,
                 RawData = rawPacket.Data
             };
